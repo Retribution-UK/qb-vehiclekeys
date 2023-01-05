@@ -31,11 +31,6 @@ RegisterNetEvent('qb-vehiclekeys:server:GiveVehicleKeys', function(receiver, pla
     end
 end)
 
-RegisterNetEvent('qb-vehiclekeys:server:policeAlert', function(plate, vehicle)
-
-
-end)
-
 RegisterNetEvent('qb-vehiclekeys:server:AcquireVehicleKeys', function(plate)
     local src = source
     GiveKeys(src, plate)
