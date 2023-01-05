@@ -31,6 +31,11 @@ RegisterNetEvent('qb-vehiclekeys:server:GiveVehicleKeys', function(receiver, pla
     end
 end)
 
+RegisterNetEvent('qb-vehiclekeys:server:policeAlert', function(plate, vehicle)
+
+
+end)
+
 RegisterNetEvent('qb-vehiclekeys:server:AcquireVehicleKeys', function(plate)
     local src = source
     GiveKeys(src, plate)
@@ -58,6 +63,14 @@ QBCore.Functions.CreateCallback('qb-vehiclekeys:server:GetVehicleKeys', function
         end
     end
     cb(keysList)
+end)
+
+QBCore.Functions.CreateCallback('qb-vehiclekeys:server:checkPlayerOwned', function(_, cb, plate)
+    local playerOwned = false
+    if VehicleList[plate] then
+        playerOwned = true
+    end
+    cb(playerOwned)
 end)
 
 -----------------------
