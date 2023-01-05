@@ -10,6 +10,7 @@ local Translations = {
         vgetkeys = 'Vous obtenez les clés du véhicule!',
         fpid = 'Remplissez les arguments ID et plaque.',
         cjackfail = 'Le détournement de voiture a échoué',
+        vehclose = 'Thers no close vehicle!',
     },
     progress = {
         takekeys = 'Prend les clés du corps..',
@@ -40,7 +41,10 @@ local Translations = {
 
 }
 
-Lang = Locale:new({
-    phrases = Translations,
-    warnOnMissing = true
-})
+if GetConvar('qb_locale', 'en') == 'fr' then
+    Lang = Locale:new({
+        phrases = Translations,
+        warnOnMissing = true,
+        fallbackLang = Lang,
+    })
+end

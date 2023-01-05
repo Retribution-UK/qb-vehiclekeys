@@ -10,6 +10,7 @@ local Translations = {
         vgetkeys = 'Saate auto võtmed!',
         fpid = 'Täitke mängija ID ja plaadi argumendid',
         cjackfail = 'Autovargamine ebaõnnestus!',
+        vehclose = 'Thers no close vehicle!',
     },
     progress = {
         takekeys = 'Võtmete kehast võtmine...',
@@ -40,7 +41,10 @@ local Translations = {
 
 }
 
-Lang = Locale:new({
-    phrases = Translations,
-    warnOnMissing = true
-})
+if GetConvar('qb_locale', 'en') == 'et' then
+    Lang = Locale:new({
+        phrases = Translations,
+        warnOnMissing = true,
+        fallbackLang = Lang,
+    })
+end
