@@ -564,7 +564,18 @@ function LockpickDoor(isAdvanced)
     if GetVehicleDoorLockStatus(vehicle) <= 0 then return end
 
     usingAdvanced = isAdvanced
-    Config.LockPickDoorEvent()
+    TriggerEvent('animations:client:EmoteCommandStart', {"lockpick"})
+    local time = math.random(7,10)
+    local circles = math.random(2,4)
+    local success = exports['qb-lock']:StartLockPickCircle(circles, time, success)
+    print(success)
+    if success then
+        LockpickFinishCallback(true)
+        TriggerEvent('animations:client:EmoteCommandStart', {"c"})
+    else
+        LockpickFinishCallback(false)
+        TriggerEvent('animations:client:EmoteCommandStart', {"c"})
+    end
 end
 function LockpickFinishCallback(success)
     local vehicle = QBCore.Functions.GetClosestVehicle()
@@ -576,14 +587,15 @@ function LockpickFinishCallback(success)
 
         if GetPedInVehicleSeat(vehicle, -1) == PlayerPedId() then
             TriggerServerEvent('qb-vehiclekeys:server:AcquireVehicleKeys', QBCore.Functions.GetPlate(vehicle))
+            AttemptPoliceAlert("steal")
         else
             QBCore.Functions.Notify(Lang:t("notify.vlockpick"), 'success')
             TriggerServerEvent('qb-vehiclekeys:server:setVehLockState', NetworkGetNetworkIdFromEntity(vehicle), 1)
+            AttemptPoliceAlert("steal")
         end
 
     else
         TriggerServerEvent('hud:server:GainStress', math.random(1, 4))
-        AttemptPoliceAlert("steal")
     end
 
     if usingAdvanced then
@@ -688,7 +700,7 @@ function CarjackVehicle(target)
             end
             isCarjacking = false
             Wait(2000)
-            AttemptPoliceAlert("carjack")
+            AttemptCarJackPoliceAlert("carjack")
             Wait(Config.DelayBetweenCarjackings)
             canCarjack = true
         end
@@ -732,6 +744,36 @@ function DrawText3D(x, y, z, text)
     local factor = (string.len(text)) / 370
     DrawRect(0.0, 0.0 + 0.0125, 0.017 + factor, 0.03, 0, 0, 0, 75)
     ClearDrawOrigin()
+end
+
+
+function AttemptCarJackPoliceAlert(type)
+    if not AlertSend then
+        local chance = Config.PoliceAlertChance
+        if GetClockHours() >= 1 and GetClockHours() <= 6 then
+            chance = Config.PoliceNightAlertChance
+        end
+        if math.random() <= chance then
+            exports['ps-dispatch']:CarJacking(vehicle)
+
+        end
+        AlertSend = true
+        SetTimeout(Config.AlertCooldown, function()
+            AlertSend = false
+        end)
+    end
+end
+
+function AttemptPoliceAlert()
+    if not AlertSend then
+        local chance = Config.PoliceAlertChance
+        if GetClockHours() >= 1 and GetClockHours() <= 6 then
+            chance = Config.PoliceNightAlertChance
+        end
+        if math.random() <= chance then
+            exports['ps-dispatch']:VehicleTheft(vehicle)
+        end
+    end
 end
 -----------------------
 ----   NUICallback   ----
